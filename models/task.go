@@ -12,6 +12,7 @@ var validate = validator.New()
 
 type Task struct {
 	ID          string         `gorm:"primarykey;type:varchar(255)" json:"id"`
+	UserID      uint           `gorm:"not null" json:"user_id"`
 	Title       string         `gorm:"type:varchar(255);not null" json:"title" validate:"required"`
 	Description string         `gorm:"type:text" json:"description"`
 	Deadline    time.Time      `gorm:"not null" json:"deadline" validate:"required"`
@@ -19,6 +20,7 @@ type Task struct {
 	CreatedAt   time.Time      `json:"-"`
 	UpdatedAt   time.Time      `json:"-"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
+	User        User           `gorm:"foreignKey:UserID" json:"-"`
 }
 
 func (t *Task) BeforeCreate(tx *gorm.DB) error {

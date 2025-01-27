@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"just-do-it-api/database"
+	"just-do-it-api/middleware"
 	"just-do-it-api/models"
 	"net/http"
 	"strings"
@@ -19,9 +20,11 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	db := database.CreateConnection()
 	var tasks []models.Task
 
+	userID := middleware.GetUserID(r)
 	deadlineStr := r.URL.Query().Get("deadline")
 
 	var result *gorm.DB
+	query := db.Where("user_id = ?", userID)
 
 	if deadlineStr != "" {
 		layout := "2006-01-02"
@@ -35,9 +38,9 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		result = db.Where("DATE(deadline) = ?", deadline.Format("2006-01-02")).Find(&tasks)
+		result = query.Where("DATE(deadline) = ?", deadline.Format("2006-01-02")).Find(&tasks)
 	} else {
-		result = db.Find(&tasks)
+		result = query.Find(&tasks)
 	}
 
 	if result.Error != nil {
@@ -55,6 +58,8 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var task models.Task
+
+	userID := middleware.GetUserID(r)
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -76,6 +81,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db := database.CreateConnection()
+	task.UserID = userID
 	result := db.Create(&task)
 	if result.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -115,7 +121,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	db := database.CreateConnection()
 	var task models.Task
-	if err := db.Where("id = ?", taskID).First(&task).Error; err != nil {
+	userID := middleware.GetUserID(r)
+	if err := db.Where("id = ? AND user_id = ?", taskID, userID).First(&task).Error; err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(models.NewErrorResponse(
 			"Not found",
@@ -163,7 +170,8 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 	db := database.CreateConnection()
 	var task models.Task
-	if err := db.Where("id = ?", taskID).First(&task).Error; err != nil {
+	userID := middleware.GetUserID(r)
+	if err := db.Where("id = ? AND user_id = ?", taskID, userID).First(&task).Error; err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(models.NewErrorResponse(
 			"Not found",
@@ -199,7 +207,8 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 
 	db := database.CreateConnection()
 	var task models.Task
-	if err := db.Where("id = ?", taskID).First(&task).Error; err != nil {
+	userID := middleware.GetUserID(r)
+	if err := db.Where("id = ? AND user_id = ?", taskID, userID).First(&task).Error; err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(models.NewErrorResponse(
 			"Not found",
@@ -229,11 +238,12 @@ func GetTodayTasks(w http.ResponseWriter, r *http.Request) {
 	db := database.CreateConnection()
 	var tasks []models.Task
 
+	userID := middleware.GetUserID(r)
 	today := time.Now().UTC()
 	startOfDay := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, time.UTC)
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
-	result := db.Where("deadline BETWEEN ? AND ?", startOfDay, endOfDay).Find(&tasks)
+	result := db.Where("user_id = ? AND deadline BETWEEN ? AND ?", userID, startOfDay, endOfDay).Find(&tasks)
 	if result.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(models.NewErrorResponse(
@@ -251,8 +261,9 @@ func GetBacklogTasks(w http.ResponseWriter, r *http.Request) {
 	db := database.CreateConnection()
 	var tasks []models.Task
 
+	userID := middleware.GetUserID(r)
 	now := time.Now().UTC()
-	result := db.Where("deadline < ? AND completed = ?", now, false).Find(&tasks)
+	result := db.Where("user_id = ? AND deadline < ? AND completed = ?", userID, now, false).Find(&tasks)
 	if result.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(models.NewErrorResponse(

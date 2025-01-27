@@ -20,10 +20,30 @@
    go mod download
    ```
 3. Set up PostgreSQL database
-4. Run the server:
+4. Run migrations and start the server:
+
    ```bash
+   # Run migrations and start server
    go run main.go
+
+   # Or, to reset database and rerun all migrations
+   go run main.go -reset
    ```
+
+### Database Migrations
+
+The project uses `golang-migrate` for database migrations. Migration files are located in the `migrations` directory:
+
+- `000001_create_users_table.up.sql`: Creates users table
+- `000001_create_users_table.down.sql`: Drops users table
+- `000002_add_user_id_to_tasks.up.sql`: Adds user_id to tasks table
+- `000002_add_user_id_to_tasks.down.sql`: Removes user_id from tasks table
+
+Migrations are automatically run when starting the server. Use the `-reset` flag to drop all tables and rerun migrations:
+
+```bash
+go run main.go -reset
+```
 
 ## Testing
 
@@ -44,7 +64,55 @@ The test suite includes:
 
 ### Authentication
 
-All endpoints require Bearer token authentication:
+#### Register
+
+- **POST** `/api/auth/register`
+- Request Body:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- Response:
+  ```json
+  {
+    "token": "jwt-token",
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "created_at": "2025-01-27T05:00:00Z",
+      "updated_at": "2025-01-27T05:00:00Z"
+    }
+  }
+  ```
+
+#### Login
+
+- **POST** `/api/auth/login`
+- Request Body:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- Response:
+  ```json
+  {
+    "token": "jwt-token",
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "created_at": "2025-01-27T05:00:00Z",
+      "updated_at": "2025-01-27T05:00:00Z"
+    }
+  }
+  ```
+
+#### Protected Endpoints
+
+All task endpoints require Bearer token authentication:
 
 ```
 Authorization: Bearer <your-token>
@@ -115,8 +183,8 @@ An Insomnia collection is included in the repository (`insomnia.json`). To use i
 1. Open Insomnia
 2. Import the collection from `insomnia.json`
 3. Set up the environment variables:
-   - `baseUrl`: `http://localhost:8080/v1`
-   - `token`: Your authentication token
+   - `baseUrl`: `http://localhost:8080`
+   - `token`: JWT token from login response (automatically set after login)
 
 ## License
 

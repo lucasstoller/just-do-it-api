@@ -1,11 +1,17 @@
 package middleware
 
 import (
+	"context"
 	"encoding/json"
+	"just-do-it-api/auth"
 	"just-do-it-api/models"
 	"net/http"
 	"strings"
 )
+
+type contextKey string
+
+const UserIDKey contextKey = "userID"
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -41,9 +47,24 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// TODO: Validate token with your auth service
-		// For now, we'll just check if it's not empty
+		claims, err := auth.ValidateToken(token)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(models.NewErrorResponse(
+				"Unauthorized",
+				"Invalid token",
+			))
+			return
+		}
 
-		next.ServeHTTP(w, r)
+		// Add user ID to request context
+		ctx := context.WithValue(r.Context(), UserIDKey, claims.UserID)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
+}
+
+// GetUserID retrieves the user ID from the request context
+func GetUserID(r *http.Request) uint {
+	userID, _ := r.Context().Value(UserIDKey).(uint)
+	return userID
 }
