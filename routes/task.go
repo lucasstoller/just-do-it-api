@@ -10,9 +10,9 @@ import (
 	"just-do-it-api/models"
 )
 
-func RegisterTaskRoutes() {
+func RegisterTaskRoutes(mux *http.ServeMux) {
 	// Base tasks endpoints
-	http.HandleFunc("/v1/tasks", middleware.Logger(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/tasks", middleware.Logger(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			handlers.GetTasks(w, r)
@@ -29,7 +29,7 @@ func RegisterTaskRoutes() {
 	})))
 
 	// Task operations by ID
-	http.HandleFunc("/v1/tasks/", middleware.Logger(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/tasks/", middleware.Logger(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/v1/tasks/" {
 			w.WriteHeader(http.StatusNotFound)
 			return
@@ -62,6 +62,6 @@ func RegisterTaskRoutes() {
 	})))
 
 	// Task filter endpoints
-	http.HandleFunc("/v1/tasks/today", middleware.Logger(middleware.AuthMiddleware(handlers.GetTodayTasks)))
-	http.HandleFunc("/v1/tasks/backlog", middleware.Logger(middleware.AuthMiddleware(handlers.GetBacklogTasks)))
+	mux.HandleFunc("/v1/tasks/today", middleware.Logger(middleware.AuthMiddleware(handlers.GetTodayTasks)))
+	mux.HandleFunc("/v1/tasks/backlog", middleware.Logger(middleware.AuthMiddleware(handlers.GetBacklogTasks)))
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"just-do-it-api/database"
+	"just-do-it-api/middleware"
 	"just-do-it-api/routes"
 )
 
@@ -28,10 +29,16 @@ func main() {
 	// Initialize database connection
 	database.CreateConnection()
 
-	// Register routes
-	routes.RegisterTaskRoutes()
-	routes.RegisterAuthRoutes()
+	// Create a new mux
+	mux := http.NewServeMux()
+
+	// Register routes on the mux
+	routes.RegisterTaskRoutes(mux)
+	routes.RegisterAuthRoutes(mux)
+
+	// Apply CORS middleware
+	handler := middleware.CorsMiddleware()(mux)
 
 	log.Printf("Server starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
