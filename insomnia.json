@@ -1,0 +1,296 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-01-27T05:15:49.000Z",
+  "__export_source": "insomnia.desktop.app:v8",
+  "resources": [
+    {
+      "_id": "req_root",
+      "parentId": "wrk_just_do_it_api",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}",
+      "name": "Just Do It API",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_just_do_it_api",
+      "parentId": null,
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "name": "Just Do It API",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_just_do_it_api",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "name": "Base Environment",
+      "data": {
+        "baseUrl": "http://localhost:8080/v1",
+        "token": "test-token"
+      },
+      "dataPropertyOrder": {
+        "&": ["baseUrl", "token"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1706332549000,
+      "_type": "environment"
+    },
+    {
+      "_id": "req_get_all_tasks",
+      "parentId": "fld_tasks",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks",
+      "name": "Get All Tasks",
+      "description": "Retrieve all tasks for the authenticated user",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_tasks",
+      "parentId": "wrk_just_do_it_api",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "name": "Tasks",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1706332549000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_create_task",
+      "parentId": "fld_tasks",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks",
+      "name": "Create Task",
+      "description": "Create a new task",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Example Task\",\n  \"description\": \"Task description\",\n  \"deadline\": \"2025-01-27T10:00:00Z\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -1706332549100,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_task",
+      "parentId": "fld_tasks",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/1643673600000",
+      "name": "Update Task",
+      "description": "Update an existing task",
+      "method": "PUT",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Updated Task\",\n  \"description\": \"Updated description\",\n  \"deadline\": \"2025-01-27T11:00:00Z\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -1706332549200,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_delete_task",
+      "parentId": "fld_tasks",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/1643673600000",
+      "name": "Delete Task",
+      "description": "Delete a task",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549300,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_toggle_task",
+      "parentId": "fld_tasks",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/1643673600000/toggle",
+      "name": "Toggle Task",
+      "description": "Toggle the completion status of a task",
+      "method": "PATCH",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549400,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_today_tasks",
+      "parentId": "fld_task_filters",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/today",
+      "name": "Get Today's Tasks",
+      "description": "Get all tasks for today",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549500,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_task_filters",
+      "parentId": "wrk_just_do_it_api",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "name": "Task Filters",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1706332549500,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_get_tasks_by_date",
+      "parentId": "fld_task_filters",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/date/2025-01-27",
+      "name": "Get Tasks by Date",
+      "description": "Get all tasks for a specific date",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549600,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_backlog_tasks",
+      "parentId": "fld_task_filters",
+      "modified": 1706332549000,
+      "created": 1706332549000,
+      "url": "{{ _.baseUrl }}/tasks/backlog",
+      "name": "Get Backlog Tasks",
+      "description": "Get all overdue and incomplete tasks",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1706332549700,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    }
+  ]
+}

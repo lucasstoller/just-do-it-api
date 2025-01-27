@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateConnection() *gorm.DB {
+func initDB() *gorm.DB {
 	dsn := "host=localhost port=5432 user=postgres password=postgres dbname=just-do-it-db sslmode=disable"
 	con, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
